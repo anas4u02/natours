@@ -98,21 +98,75 @@ const deleteTour = (req, res) => {
     });
 }
 
+const getAllUsers = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: "This endpoint has not been defined yet!"
+    });
+}
+
+const createUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: "This endpoint has not been defined yet!"
+    });
+}
+
+const getOneUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: "This endpoint has not been defined yet!"
+    });
+}
+
+const updateUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: "This endpoint has not been defined yet!"
+    });
+}
+
+const deleteUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: "This endpoint has not been defined yet!"
+    });
+}
+
 // app.get('/api/v1/tours', getAllTours);
 // app.get('/api/v1/tours/:id', getOneTour);
 // app.post('/api/v1/tours', addTour);
 // app.patch('/api/v1/tours/:id', patchTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
-app
-    .route('/api/v1/tours')
+// ROUTE HANDLERS
+const tourRouter = express.Router();
+const userRouter = express.Router();
+app.use('/api/v1/tours', tourRouter);
+
+tourRouter.route('/')
     .get(getAllTours)
     .post(addTour);
-app
-    .route('/api/v1/tours/:id')
+
+tourRouter.route('/:id')
     .get(getOneTour)
     .patch(patchTour)
     .delete(deleteTour);
+app.use('/api/v1/tours', tourRouter);
+
+app.use('/api/v1/users', userRouter);
+
+userRouter.route('/')
+    .get(getAllUsers)
+    .post(createUser);
+
+userRouter.route('/:id')
+    .get(getOneUser)
+    .patch(updateUser)
+    .delete(deleteUser);
+
+
+// START SERVER
 
 const port = 3000;
 app.listen(port, () => {
