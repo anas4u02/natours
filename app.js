@@ -1,5 +1,4 @@
 const express = require('express');
-const { log } = require("console");
 const morgan = require('morgan');
 const userRouter = require('./routes/user-routes');
 const tourRouter = require('./routes/tour-routes');
@@ -19,7 +18,4 @@ app.use((req, res, next) => {
 
 // START SERVER
 
-const port = 3000;
-app.listen(port, () => {
-    console.log(`App running on port ${port}...`);
-});
+module.exports = app;
