@@ -5,6 +5,8 @@ const tourRouter = require('./routes/tour-routes');
 
 const app = express();
 
+app.use(express.static(`${__dirname}/public`));
+
 // MIDDLEWARES
 app.use(morgan('dev'));
 app.use(express.json());
