@@ -1,23 +1,6 @@
-/* eslint-disable prettier/prettier */
-const fs = require('fs');
 const { log } = require('console');
+const Tour = require('../models/tourModel');
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
-);
-
-exports.checkId = (req, res, next, val) => {
-//   console.log(`Tour id is: ${val}`);
-  const id = req.params.id * 1;
-  const tour = tours.find((el) => el.id === id);
-
-  if (!tour) {
-    return res.status(404).json({
-      message: 'No data found for the ID',
-    });
-  }
-  next();
-};
 
 exports.validateBody = (req, res, next) => {
   if (!req.body.name || !req.body.price) {
@@ -34,10 +17,10 @@ exports.getAllTours = (req, res) => {
   res.status(200).json({
     createdAt: req.requestTime,
     status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
+    // results: tours.length,
+    // data: {
+    //   tours,
+    // },
   });
 };
 
@@ -45,9 +28,9 @@ exports.getOneTour = (req, res) => {
   res.status(200).json({
     createdAt: req.requestTime,
     status: 'success',
-    data: {
-      tours,
-    },
+    // data: {
+    //   tours,
+    // },
   });
 };
 
@@ -63,9 +46,9 @@ exports.addTour = (req, res) => {
     (err) => {
       res.status(201).json({
         status: 'success',
-        data: {
-          tour: newTour,
-        },
+        // data: {
+        //   tour: newTour,
+        // },
       });
     },
   );
@@ -75,15 +58,15 @@ exports.addTour = (req, res) => {
 
 exports.patchTour = (req, res) => {
   // eslint-disable-next-line no-undef, no-unused-vars
-  const tour = tours.find((el) => el.id === id);
+  // const tour = tours.find((el) => el.id === id);
   // fs does not support anything similar to PATCH request, that's why it's
   // not implemented here
 
   res.status(200).json({
     status: 'success',
-    data: {
-      tour: 'Updated tour here',
-    },
+    // data: {
+    //   tour: 'Updated tour here',
+    // },
   });
 };
 

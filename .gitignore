@@ -1,0 +1,4 @@
+node_modules
+dev-data/img
+public/img
+config.env
