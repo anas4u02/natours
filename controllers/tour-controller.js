@@ -1,78 +1,99 @@
-const { log } = require('console');
 const Tour = require('../models/tourModel');
 
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await Tour.find();
 
-exports.validateBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Invalid request body!',
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failure',
+      message: err,
     });
   }
-  next();
 };
 
-exports.getAllTours = (req, res) => {
-  log(req.requestTime);
-  res.status(200).json({
-    createdAt: req.requestTime,
-    status: 'success',
-    // results: tours.length,
-    // data: {
-    //   tours,
-    // },
-  });
+exports.getOneTour = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+    res.status(200).json({
+      status: 'success',
+      data: { tour },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failure',
+      message: err,
+    });
+  }
+  // res.status(200).json({
+  //   createdAt: req.requestTime,
+  //   status: 'success',
+  //   // data: {
+  //   //   tours,
+  //   // },
+  // });
 };
 
-exports.getOneTour = (req, res) => {
-  res.status(200).json({
-    createdAt: req.requestTime,
-    status: 'success',
-    // data: {
-    //   tours,
-    // },
-  });
+exports.addTour = async (req, res) => {
+  try {
+    // const newTour = new Tour({});
+    // newTour.save();
+
+    const newTour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: { newTour },
+      message: 'New Tour created Successfully!'
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failure',
+      message: err
+    });
+  }
 };
 
-exports.addTour = (req, res) => {
-  const newId = tours[tours.length - 1] + 1;
-  // eslint-disable-next-line prefer-object-spread
-  const newTour = Object.assign({ id: newId }, req.body);
-  tours.push(newTour);
-  fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours),
-    // eslint-disable-next-line no-unused-vars
-    (err) => {
-      res.status(201).json({
-        status: 'success',
-        // data: {
-        //   tour: newTour,
-        // },
-      });
-    },
-  );
+exports.patchTour = async (req, res) => {
+  try {
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
 
-  console.log(req.body);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour
+      }
+    });
+
+  } catch (err) {
+    res.status(404).json({
+      status: 'failure',
+      message: err
+    });
+  }
 };
 
-exports.patchTour = (req, res) => {
-  // eslint-disable-next-line no-undef, no-unused-vars
-  // const tour = tours.find((el) => el.id === id);
-  // fs does not support anything similar to PATCH request, that's why it's
-  // not implemented here
+exports.deleteTour = async (req, res) => {
+  try {
+    await Tour.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      status: 'success',
+      data: null
+    });
 
-  res.status(200).json({
-    status: 'success',
-    // data: {
-    //   tour: 'Updated tour here',
-    // },
-  });
-};
-
-exports.deleteTour = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: null,
-  });
+  } catch( err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    });
+  }
 };
