@@ -1,8 +1,18 @@
 const Tour = require('../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
+  const queryObj = {...req.query};
+  const excludedFields = ['page', 'sort', 'limit', 'fields'];
+  excludedFields.forEach(el => delete queryObj[el]);
+
   try {
-    const tours = await Tour.find();
+    const query = await Tour.find(queryObj);
+
+    // Another way of filtering the results
+    // const query = await Tour.find().where('duration').equals(5).where('difficulty').equals('easy');
+
+    // The query is first built in the above code and then executed here for the pagination, limits and other filters to work
+    const tours = await query;
 
     res.status(200).json({
       status: 'success',
