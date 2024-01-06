@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 
 const app = require('./app');
+
 const e = require('express');
 
 // const DB = process.env.DATABASE.replace(
