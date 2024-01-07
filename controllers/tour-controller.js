@@ -9,11 +9,13 @@ exports.getAllTours = async (req, res) => {
         // Another way of filtering the results
         // const query = await Tour.find().where('duration').equals(5).where('difficulty').equals('easy');
 
+        // Filtering using > >= < <=
         let queryStr = JSON.stringify(queryObj);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
 
         let query = Tour.find(JSON.parse(queryStr));
 
+        // SORTING
         if (req.query.sort) {
             const sortBy = req.query.sort.split(',').join(' ');
             query = query.sort(sortBy);
@@ -21,13 +23,28 @@ exports.getAllTours = async (req, res) => {
             query = query.sort('-createdAt');
         }
 
+        // SELECTED FIELDS
         if (req.query.fields) {
-            const fields = req.query.fields.split(',').join(' ') +  ' -__v';
+            const fields = req.query.fields.split(',').join(' ') + ' -__v';
             query = query.select(fields);
         } else {
             query = query.select('-__v');
         }
-        
+
+        // PAGINATION
+        const page = req.query.page * 1 || 1;
+        const limit = req.query.limit * 1 || 100;
+        const skip = (page - 1) * limit;
+
+        query = query.skip(skip).limit(limit);
+
+        if (req.query.page) {
+            const numTours = await Tour.countDocuments();
+            if (skip >= numTours) {
+                throw new Error('This page does not exist!');
+            }
+        }
+
         // The query is first built in the first line of try block and then executed here for the pagination, limits and other filters to work
         const tours = await query;
 
