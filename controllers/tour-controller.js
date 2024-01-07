@@ -20,6 +20,13 @@ exports.getAllTours = async (req, res) => {
         } else {
             query = query.sort('-createdAt');
         }
+
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ') +  ' -__v';
+            query = query.select(fields);
+        } else {
+            query = query.select('-__v');
+        }
         
         // The query is first built in the first line of try block and then executed here for the pagination, limits and other filters to work
         const tours = await query;
@@ -29,12 +36,12 @@ exports.getAllTours = async (req, res) => {
             results: tours.length,
             data: {
                 tours,
-            },
+            }
         });
     } catch (err) {
         res.status(400).json({
             status: 'failure',
-            message: err,
+            message: err
         });
     }
 };
@@ -44,12 +51,12 @@ exports.getOneTour = async (req, res) => {
         const tour = await Tour.findById(req.params.id);
         res.status(200).json({
             status: 'success',
-            data: {tour},
+            data: {tour}
         });
     } catch (err) {
         res.status(400).json({
             status: 'failure',
-            message: err,
+            message: err
         });
     }
     // res.status(200).json({
