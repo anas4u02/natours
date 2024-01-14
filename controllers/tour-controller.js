@@ -112,3 +112,42 @@ exports.deleteTour = async (req, res) => {
         });
     }
 };
+
+exports.getTourStats = async (req, res) => {
+    try {
+        const stats = await Tour.aggregate([
+            {
+                $match: {ratingsAverage: {$gte: 4.5}}
+            },
+            {
+                $group: {
+                    _id: '$difficulty',
+                    numTours: {$sum: 1},
+                    numRatings: {$sum: '$ratingsAverage'},
+                    avgRating: {$avg: '$ratingsAverage'},
+                    avgPrice: {$avg: '$price'},
+                    minPrice: {$min: '$price'},
+                    maxPrice: {$max: '$price'}
+                }
+            },
+            // The fields used in subsequent stages uses the fields defined in the previous stages
+            // because we are trying to sort the aggregated results and not the whole table
+            {
+                $sort: {avgPrice: 1}    // 1 for ascending and -1 for descending
+            },
+            // We can also repeat the pipeline multiple times as demonstrated below
+            // {
+            //     $match: {_id: {$ne: 'easy'}}
+            // }
+        ]);
+        res.status(200).json({
+            status: 'success',
+            data: stats
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        });
+    }
+}
