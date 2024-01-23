@@ -20,6 +20,15 @@ app.use((req, res, next) => {
     next();
 });
 
+// The execution of code in nodejs is sequential, if the above part gets executed the code won't reach
+// here. If all the above routes fails, then the routes are handled below.
+app.all('*', (req, res, next)=> {
+  res.status(404).json({
+    status: 'fail',
+    message: "Can't find the requested route!"
+  });
+});
+
 // START SERVER
 
 module.exports = app;
