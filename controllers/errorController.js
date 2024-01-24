@@ -2,7 +2,6 @@ const AppError = require('../utils/appError');
 
 const handleCastErrorDB = err => {
     const message = `Invalid ${err.path}: ${err.value} values`;
-    console.log("handleCastErrorDB: ");
     return (new AppError(message, 400));
 }
 
@@ -39,13 +38,9 @@ module.exports = (err, req, res, next) => {
     if (process.env.NODE_ENV == 'development') {
         sendErrorDev(err, res);
     } else if (process.env.NODE_ENV == 'production') {
-        console.log("Inside Production error handling!");
         let error = { ...err };
 
-
-        console.log("error OBJ: ", error);
         if (err.name == 'CastError') {
-            console.log("INSIDE IF BLOCK");
             error = handleCastErrorDB(error);
         }
         sendErrorProd(error, res);
