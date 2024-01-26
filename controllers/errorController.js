@@ -14,6 +14,11 @@ const handleDuplicateFieldsDB = err => {
     return new AppError(message, 400);
 }
 
+const handleValidationErrorDB = err => {
+    const message = `Invalid data entry!`;
+    return new AppError(message, 400);
+}
+
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
         error: err,
@@ -45,6 +50,11 @@ module.exports = (err, req, res, next) => {
 
     if (process.env.NODE_ENV == 'development') {
         sendErrorDev(err, res);
+        console.log("NAME OF ERROR:",err.name);
+        if (err.name == 'ValidationError') {
+            console.log("INSIDE VALIDATION ERROR");
+            error = handleValidationErrorDB(err);
+        }
     } else if (process.env.NODE_ENV == 'production') {
         let error = { ...err };
 
@@ -55,6 +65,8 @@ module.exports = (err, req, res, next) => {
         if (err.code == 11000) {
             error = handleDuplicateFieldsDB(err);
         }
+
+
         sendErrorProd(error, res);
     }
     next();
