@@ -55,7 +55,11 @@ const tourSchema = new mongoose.Schema({
             default: Date.now(),
             select: false
         },
-        startDates: [Date]   // Different dates for the same tour
+        startDates: [Date],   // Different dates for the same tour
+        secretTour: {
+            type: Boolean,
+            default: false
+        }
     },
     {
         toJSON: {virtuals: true},
@@ -66,7 +70,8 @@ tourSchema.virtual('durationWeeks').get(function () {
     return this.duration / 7;
 });
 
-// // DOCUMENT MIDDLEWARE: runs before .save() amd. crete()
+// DOCUMENT MIDDLEWARE: runs before .save() amd. crete()
+// The document middlewares are also known as Document Hooks/pre save hooks, post save hooks
 // tourSchema.pre('save', function (next) {
 //     this.slug = slugify(this.name, {lower: true});
 //     next();
@@ -80,6 +85,19 @@ tourSchema.virtual('durationWeeks').get(function () {
 //     console.log(doc)
 //     next();
 // });
+
+// Query Middleware
+tourSchema.pre(/^find/, function (next) {
+    this.find({secretTour: {$ne: true}});
+    this.start = Date.now();
+    next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+    console.log(docs)B
+    console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+    next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 
