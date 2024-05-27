@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema({
       // Only works on CREATE and SAVE!
       validator: function (v) {
         return v === this.password;
-      }
-    }
+      },
+    },
   },
 });
 
