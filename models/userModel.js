@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide a password!'],
     minlength: [10, 'Password must be greater than 10 characters'],
+    select: false,
   },
   passwordConfirmation: {
     type: String,
@@ -33,7 +34,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function (next) {
-  if(!this.isModified('password')) return next();
+  if (!this.isModified('password')) return next();
 
   // Hash the password with the cost of 12
   this.password = await bcrypt.hash(this.password, 12);
@@ -42,6 +43,13 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirmation = undefined;
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
