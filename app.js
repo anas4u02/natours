@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 const express = require('express');
 const morgan = require('morgan');
+require('express');
 const userRouter = require('./routes/user-routes');
 const tourRouter = require('./routes/tour-routes');
-const e = require('express');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
